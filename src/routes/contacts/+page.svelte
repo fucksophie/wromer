@@ -52,7 +52,7 @@
 	}
 </script>
 
-<div class="flex min-h-[60vh] flex-col items-center justify-center rounded-xl bg-base-200 p-8">
+<div class="flex min-h-[60vh] flex-col items-center justify-center rounded-xl p-8">
 	<div>
 		<h2 class="mb-6 text-center text-3xl font-bold text-primary">Contacts</h2>
 		<hr class="mb-6" />

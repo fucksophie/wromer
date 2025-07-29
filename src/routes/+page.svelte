@@ -120,7 +120,7 @@
 	}
 </script>
 
-<div class="flex min-h-[60vh] flex-col items-center justify-center rounded-xl bg-base-200 p-8">
+<div class="flex min-h-[60vh] flex-col items-center justify-center rounded-xl p-8">
 	<div>
 		<div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 			<h2 class="text-3xl font-bold text-primary">Your Wallets</h2>
