@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { KristApi, type KristAddress } from 'krist';
-	const api = new KristApi({
-		syncNode: 'https://kromer.reconnected.cc/api/krist/'
-	});
+	import { api } from '$lib';
+	import { type KristAddress } from 'krist';
 
 	import { onMount } from 'svelte';
 	let richestAddresses: KristAddress[] = $state([]);

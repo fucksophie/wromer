@@ -9,7 +9,9 @@
 		faList,
 		faEyeSlash,
 		faPaperPlane,
-		faPeopleGroup
+		faPeopleGroup,
+		faTrash,
+		faUndo
 	} from '@fortawesome/free-solid-svg-icons';
 
 	const wallets: Wallet[] = $state(JSON.parse(localStorage.getItem('wallets') || '[]'));
@@ -25,6 +27,8 @@
 
 	let showBackupModal = $state(false);
 	let backupString = $state('');
+
+	let recentlyDeleted: { wallet: Wallet; deletedAt: number }[] = $state([]);
 
 	function openBackupModal() {
 		backupString = `${JSON.stringify(Object.entries(localStorage))}.map(z=>localStorage.setItem(z[0],z[1]));location.reload()`;
@@ -85,6 +89,24 @@
 
 	function handleSendError(error: string) {
 		console.error('Send error:', error);
+	}
+
+	function deleteWallet(address: string) {
+		const idx = wallets.findIndex((w) => w.address === address);
+		if (idx !== -1) {
+			const [removed] = wallets.splice(idx, 1);
+			localStorage.setItem('wallets', JSON.stringify(wallets));
+			recentlyDeleted.unshift({ wallet: removed, deletedAt: Date.now() });
+		}
+	}
+
+	function undoDelete(address: string) {
+		const idx = recentlyDeleted.findIndex((d) => d.wallet.address === address);
+		if (idx !== -1) {
+			const [restored] = recentlyDeleted.splice(idx, 1);
+			wallets.unshift(restored.wallet);
+			localStorage.setItem('wallets', JSON.stringify(wallets));
+		}
 	}
 </script>
 
@@ -181,6 +203,26 @@
 			</div>
 		{/if}
 
+		{#if recentlyDeleted.length > 0}
+			<div class="mb-6">
+				{#each recentlyDeleted as del (del.wallet.address)}
+					<div class="mb-2 alert flex items-center gap-4 alert-warning">
+						<div>
+							<span class="font-semibold">Wallet {del.wallet.address} deleted.</span>
+							<span class="ml-2 text-sm text-error">Private key is unrecoverable after reload!</span
+							>
+						</div>
+						<button
+							class="btn ml-auto btn-outline btn-sm btn-success"
+							onclick={() => undoDelete(del.wallet.address)}
+						>
+							<Fa icon={faUndo} class="mr-1" /> Undo
+						</button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		<hr class="mb-6" />
 		{#if wallets.length == 0}
 			<div class="mb-8 alert alert-info shadow-lg">
@@ -210,7 +252,7 @@
 		{#if wallets.length > 0}
 			<ul class="grid gap-4">
 				{#each wallets as wallet (wallet.address)}
-					<li>
+					<li class="relative">
 						<a
 							href="/wallet/{wallet.address}"
 							class="card flex items-center border border-base-300 bg-base-100 px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
@@ -223,6 +265,16 @@
 									<div class="text-sm text-base-content opacity-70">View wallet details</div>
 								</div>
 							</div>
+							<button
+								class="btn absolute top-2 right-2 btn-sm btn-error"
+								title="Delete wallet"
+								onclick={(e) => {
+									e.preventDefault();
+									deleteWallet(wallet.address);
+								}}
+							>
+								<Fa icon={faTrash} class="mr-1" /> Delete
+							</button>
 						</a>
 					</li>
 				{/each}

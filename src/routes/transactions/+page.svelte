@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { KristApi, parseCommonMeta, type KristTransaction } from 'krist';
-	const api = new KristApi({
-		syncNode: 'https://kromer.reconnected.cc/api/krist/'
-	});
+	import { parseCommonMeta, type KristTransaction } from 'krist';
 
 	import { onMount } from 'svelte';
 
 	import Fa from 'svelte-fa';
 	import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+	import { api } from '$lib';
 
 	let transactions: KristTransaction[] = $state([]);
 	let page = $state(0);

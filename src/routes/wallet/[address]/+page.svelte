@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { verified } from '$lib';
+	import { api, verified } from '$lib';
 	import type { Wallet } from '$lib/types.js';
 
-	import { KristApi, parseCommonMeta, type KristAddress, type KristTransaction } from 'krist';
-	const api = new KristApi({
-		syncNode: 'https://kromer.reconnected.cc/api/krist/'
-	});
+	import { parseCommonMeta, type KristAddress, type KristTransaction } from 'krist';
+
 	let { params } = $props();
 	const wallets: Wallet[] = $state(JSON.parse(localStorage.getItem('wallets') || '[]'));
 
