@@ -19,7 +19,6 @@
 	let loading = $state(false);
 	let hasMore = $state(true);
 
-	// FontAwesome imports
 	import Fa from 'svelte-fa';
 	import {
 		faUserCheck,

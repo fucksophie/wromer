@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { Wallet } from '$lib/types';
-	import { getKristAddressRegexV2, KristApi } from 'krist';
+	import { calculateAddress, getKristAddressRegexV2, KristApi } from 'krist';
 	import { verified } from '$lib';
 
-	// FontAwesome icons
 	import Fa from 'svelte-fa';
 	import {
 		faPaperPlane,
@@ -12,7 +11,6 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import { SvelteMap } from 'svelte/reactivity';
 
-	// Props
 	interface Props {
 		wallets?: Wallet[];
 		contacts?: { address: string; description: string }[];
@@ -80,13 +78,11 @@
 
 	const regex = getKristAddressRegexV2('k');
 
-	// List of verified addresses as array of {address, label}
 	const verifiedList = Object.entries(verified).map(([address, label]) => ({
 		address,
 		label
 	}));
 
-	// All possible recipients for dropdown: verified + contacts + wallets
 	const recipientDropdownList = $derived(() => {
 		const combined = [
 			...verifiedList.map((v) => ({
@@ -102,7 +98,6 @@
 				label: `😊 Your wallet (${c.address})`
 			}))
 		];
-		// Remove duplicates, keeping the last occurrence
 		const map = new SvelteMap<string, { address: string; label: string }>();
 		for (const item of combined) {
 			map.set(item.address, item);
@@ -110,7 +105,6 @@
 		return Array.from(map.values());
 	});
 
-	// When wallet selection changes, update selectedWallet and balance
 	$effect(() => {
 		if (send.from.type === 'wallet' && send.from.walletAddress) {
 			selectedWallet = wallets.find((w) => w.address === send.from.walletAddress);
@@ -132,7 +126,6 @@
 		}
 	});
 
-	// Update send state when props change
 	$effect(() => {
 		if (toAddress !== send.to.dropdown && toAddress !== send.to.manual) {
 			if (toType === 'dropdown') {
@@ -159,7 +152,6 @@
 		}
 	});
 
-	// Validate private key if entered
 	async function validatePrivateKey() {
 		send.from.private.error = '';
 		send.from.private.valid = false;
@@ -176,19 +168,17 @@
 				send.from.private.valid = false;
 			}
 		} catch (err: unknown) {
-			// @ts-expect-error: KristApi.login may throw with non-standard error shape
+			// @ts-expect-error: ...
 			send.from.private.error = err?.message || 'Invalid private key.';
 			send.from.private.valid = false;
 		}
 	}
 
-	// Get address for private key (if valid)
 	$effect(() => {
 		async function doAsync() {
 			if (send.from.type === 'private' && send.from.private.valid && send.from.private.key) {
 				try {
-					// @ts-expect-error: calculateAddress may not exist on KristApi in some types
-					const [address] = await api.calculateAddress(send.from.private.key, undefined, 'api');
+					const [address] = await calculateAddress(send.from.private.key, undefined, 'api');
 					send.from.private.address = address;
 				} catch {
 					send.from.private.address = '';
@@ -283,7 +273,7 @@
 			send.to.manual = '';
 			onSuccess?.(tx.id, amountNum, recipient);
 		} catch (err: unknown) {
-			// @ts-expect-error: KristApi.makeTransaction may throw with non-standard error shape
+			// @ts-expect-error: ...
 			const error = err?.message || 'Failed to send transaction.';
 			send.status.error = error;
 			onError?.(error);
@@ -291,7 +281,6 @@
 		send.status.sending = false;
 	}
 
-	// Public methods for external control
 	export function setToAddress(address: string, type: 'dropdown' | 'manual' = 'manual') {
 		send.to.type = type;
 		if (type === 'dropdown') {

@@ -3,7 +3,6 @@
 	import { getKristAddressRegexV2 } from 'krist';
 	import SendWidget from '$lib/SendWidget.svelte';
 
-	// FontAwesome icons
 	import Fa from 'svelte-fa';
 	import {
 		faCoins,
@@ -24,7 +23,17 @@
 		showSendKRO: false
 	});
 
-	// SendWidget props
+	let showBackupModal = $state(false);
+	let backupString = $state('');
+
+	function openBackupModal() {
+		backupString = `${JSON.stringify(Object.entries(localStorage))}.map(z=>localStorage.setItem(z[0],z[1]));location.reload()`;
+		showBackupModal = true;
+	}
+	function closeBackupModal() {
+		showBackupModal = false;
+	}
+
 	let sendWidgetToAddress = $state('');
 	let sendWidgetToType: 'dropdown' | 'manual' = $state('dropdown');
 	let sendWidgetAmount = $state('');
@@ -48,7 +57,6 @@
 		}
 	}
 
-	// Handle URL parameters for SendWidget
 	const params = new URLSearchParams(new URL(location.href).search);
 	if (params.has('to')) {
 		const toParam = params.get('to')!;
@@ -73,12 +81,10 @@
 
 	function handleSendSuccess(txId: number) {
 		console.log(`Transaction successful: ${txId}`);
-		// Optionally redirect or show additional UI feedback
 	}
 
 	function handleSendError(error: string) {
 		console.error('Send error:', error);
-		// Error is already handled by the SendWidget component
 	}
 </script>
 
@@ -99,8 +105,36 @@
 					<Fa icon={faPeopleGroup} class="mr-2" />
 					Contacts
 				</a>
+				<!-- Backup Button -->
+				<button class="btn btn-outline btn-warning" onclick={openBackupModal}> Backup </button>
 			</div>
 		</div>
+		<!-- Backup Modal -->
+		{#if showBackupModal}
+			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
+					<h3 class="mb-2 text-xl font-bold text-warning">Backup Your Wallet Data</h3>
+					<p class="mb-4 text-base-content">
+						<strong class="text-error">Warning:</strong> This backup contains
+						<span class="font-bold">your private keys</span>
+						and all wallet data.
+						<span class="font-bold">Do not share this backup with anyone.</span>
+					</p>
+					<p class="mb-2 text-base-content">
+						To restore your wallet, paste this code into your browser's console on a new device.
+					</p>
+					<textarea
+						class="textarea-bordered textarea mb-4 w-full font-mono text-xs"
+						readonly
+						rows="4"
+						onfocus={(e) => (e.target as HTMLTextAreaElement).select()}>{backupString}</textarea
+					>
+					<div class="flex justify-end gap-2">
+						<button class="btn btn-outline btn-sm" onclick={closeBackupModal}>Close</button>
+					</div>
+				</div>
+			</div>
+		{/if}
 		<!-- Centered input in its own container, no border -->
 		<div class="mb-6 flex flex-col items-center justify-center gap-4">
 			<input

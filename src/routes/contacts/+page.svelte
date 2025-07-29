@@ -1,16 +1,13 @@
 <script lang="ts">
 	import { getKristAddressRegexV2 } from 'krist';
 
-	// FontAwesome icons
 	import Fa from 'svelte-fa';
 	import { faPlus, faTrash, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
-	// State for contacts
 	let contacts: { address: string; description: string }[] = $state(
 		JSON.parse(localStorage.getItem('contacts') || '[]')
 	);
 
-	// Add contact form state
 	let newContact = $state({
 		address: '',
 		description: '',
@@ -20,13 +17,11 @@
 
 	const addressRegex = getKristAddressRegexV2('k');
 
-	// Remove contact
 	function removeContact(address: string) {
 		contacts = contacts.filter((c) => c.address !== address);
 		localStorage.setItem('contacts', JSON.stringify(contacts));
 	}
 
-	// Add contact
 	function addContact() {
 		newContact.error = '';
 		newContact.success = '';
