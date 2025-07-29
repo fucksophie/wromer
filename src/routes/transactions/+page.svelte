@@ -43,7 +43,7 @@
 			{#each transactions as tx (tx.id)}
 				<li>
 					<div
-						class="card border border-base-300 bg-base-100 px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
+						class="card border border-base-300 bg-neutral px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
 					>
 						<div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
 							<div>

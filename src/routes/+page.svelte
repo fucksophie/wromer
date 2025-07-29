@@ -143,13 +143,12 @@
 		</div>
 		{#if showBackupModal}
 			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
+				<div class="bg-neutral0 relative w-full max-w-lg rounded-lg p-6 shadow-lg">
 					<h3 class="mb-2 text-xl font-bold text-warning">Backup Your Wallet Data</h3>
 					<p class="mb-4 text-base-content">
-						<strong class="text-error">Warning:</strong> This backup contains
-						<span class="font-bold">your private keys</span>
-						and all wallet data.
-						<span class="font-bold">Do not share this backup with anyone.</span>
+						<strong class="text-warning">Warning:</strong> This backup contains strongly encrypted versions
+						of your private keys. I would not reccomend sharing it, as it is still possible to crack
+						them.
 					</p>
 					<p class="mb-2 text-base-content">
 						To restore your wallet, paste this code into your browser's console on a new device.
@@ -168,7 +167,7 @@
 		{/if}
 		{#if encryptPreviousWalletsModal}
 			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
+				<div class="relative w-full max-w-lg rounded-lg bg-neutral p-6 shadow-lg">
 					<h3 class="mb-2 text-xl font-bold text-error">Encrypt your wallets.</h3>
 					<p class="mb-4 text-base-content">
 						<strong class="text-error">Warning:</strong> If you forget your encryption password, you
@@ -207,7 +206,7 @@
 
 		{#if dencryptionModal && wallets.length != 0}
 			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
+				<div class="relative w-full max-w-lg rounded-lg bg-neutral p-6 shadow-lg">
 					<h3 class="mb-2 text-xl font-bold text-info">Decrypt your wallets!</h3>
 					<p class="mb-2 text-base-content">
 						Decrypt your wallets, if you wish to send transactions. If you do not, then close the
@@ -250,7 +249,7 @@
 		<div class="mb-6 flex flex-col items-center justify-center gap-4">
 			<input
 				type="text"
-				class="input w-full max-w-md text-center input-primary"
+				class="input w-full max-w-md bg-neutral text-center input-primary"
 				bind:value={ui.inputAddress}
 				placeholder="Enter wallet address"
 			/>
@@ -349,7 +348,7 @@
 					<li class="relative">
 						<a
 							href="/wallet/{wallet.address}"
-							class="card flex items-center border border-base-300 bg-base-100 px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
+							class="card flex items-center border border-base-300 bg-neutral px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
 						>
 							<div class="flex items-center gap-4">
 								<div>

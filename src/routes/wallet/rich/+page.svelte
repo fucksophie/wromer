@@ -43,7 +43,7 @@
 									? 'border-red-400 bg-red-100'
 									: i === 2
 										? 'border-yellow-400 bg-yellow-100'
-										: 'border-base-300 bg-base-100'
+										: 'border-base-300 bg-neutral'
 						}`}
 					>
 						<div class="flex w-full items-center gap-4">

@@ -31,7 +31,7 @@
 	updateTitle();
 </script>
 
-<div class="mb-4 navbar border-b border-base-300 bg-base-200">
+<div class="neutral mb-4 navbar border-b border-base-300">
 	<div class="container mx-auto items-center">
 		<a href="/" class="text-xl font-bold text-primary transition-colors hover:text-secondary">
 			{title}

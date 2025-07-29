@@ -306,7 +306,7 @@
 	}
 </script>
 
-<div class="card border border-base-300 bg-base-100 shadow {className}">
+<div class="card border border-base-200 bg-neutral shadow {className}">
 	<div class="card-body">
 		{#if showTitle}
 			<h3 class="mb-2 text-xl font-bold text-primary">{title}</h3>

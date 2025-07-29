@@ -57,7 +57,7 @@
 		<h2 class="mb-6 text-center text-3xl font-bold text-primary">Contacts</h2>
 		<hr class="mb-6" />
 
-		<div class="card mb-8 border border-base-300 bg-base-100 shadow">
+		<div class="card mb-8 border border-base-300 bg-neutral shadow">
 			<div class="card-body">
 				<h3 class="mb-2 text-xl font-bold text-primary">Add Contact</h3>
 				<div class="flex flex-col gap-2 md:flex-row md:items-center">
@@ -105,7 +105,7 @@
 				{#each contacts as contact (contact.address)}
 					<li>
 						<div
-							class="card flex items-center border border-base-300 bg-base-100 px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
+							class="card flex items-center border border-base-300 bg-neutral px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg"
 						>
 							<div class="flex-1">
 								<div class="text-lg font-semibold text-primary">{contact.description}</div>
