@@ -10,6 +10,7 @@
 		faCheckCircle
 	} from '@fortawesome/free-solid-svg-icons';
 	import { SvelteMap } from 'svelte/reactivity';
+	import { AESGCMDecrypt } from './aes';
 
 	interface Props {
 		wallets?: Wallet[];
@@ -27,6 +28,8 @@
 		class?: string;
 		title?: string;
 		showTitle?: boolean;
+		encryptionPassword?: string;
+		dencryptionModal?: boolean;
 	}
 
 	let {
@@ -41,7 +44,9 @@
 		onError,
 		class: className = '',
 		title = 'Send KRO',
-		showTitle = true
+		showTitle = true,
+		encryptionPassword = '',
+		dencryptionModal = $bindable()
 	}: Props = $props();
 
 	const api = new KristApi({
@@ -227,7 +232,13 @@
 				onError?.(error);
 				return;
 			}
-			privatekey = wallet.private_key;
+			if (!encryptionPassword) {
+				send.status.error = 'You have not entered an encryption password. Enter one and try again.';
+				send.status.sending = false;
+				dencryptionModal = true;
+				return;
+			}
+			privatekey = (await AESGCMDecrypt(wallet.encryptedPrivateKey, encryptionPassword))!; // if encryptionPassword is populated, it works
 		} else {
 			privatekey = send.from.private.key;
 		}

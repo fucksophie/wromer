@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Wallet } from '$lib/types';
+	import type { OldWallet, Wallet } from '$lib/types';
 	import { getKristAddressRegexV2 } from 'krist';
 	import SendWidget from '$lib/SendWidget.svelte';
 
@@ -13,6 +13,7 @@
 		faTrash,
 		faUndo
 	} from '@fortawesome/free-solid-svg-icons';
+	import { AESGCMDecrypt, AESGCMEncrypt } from '$lib/aes';
 
 	const wallets: Wallet[] = $state(JSON.parse(localStorage.getItem('wallets') || '[]'));
 	const contacts: { address: string; description: string }[] = $state(
@@ -27,6 +28,7 @@
 
 	let showBackupModal = $state(false);
 	let backupString = $state('');
+	let encryptPreviousWalletsModal = $state(false);
 
 	let recentlyDeleted: { wallet: Wallet; deletedAt: number }[] = $state([]);
 
@@ -42,8 +44,16 @@
 	let sendWidgetToType: 'dropdown' | 'manual' = $state('dropdown');
 	let sendWidgetAmount = $state('');
 	let sendWidgetMetadata = $state('');
+	let encryptionPassword = $state('');
 
 	const regex = getKristAddressRegexV2('k');
+	let dencryptionModal = $state(false);
+
+	$effect(() => {
+		if (wallets.find((z) => (z as unknown as OldWallet).private_key as string)) {
+			encryptPreviousWalletsModal = true;
+		}
+	});
 
 	$effect(() => {
 		if (!ui.inputAddress) {
@@ -156,6 +166,87 @@
 				</div>
 			</div>
 		{/if}
+		{#if encryptPreviousWalletsModal}
+			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
+					<h3 class="mb-2 text-xl font-bold text-error">Encrypt your wallets.</h3>
+					<p class="mb-4 text-base-content">
+						<strong class="text-error">Warning:</strong> If you forget your encryption password, you
+						will lose the privatekeys.
+					</p>
+					<p class="mb-2 text-base-content">
+						It is impossible to restore your wallet without the encryption password. This is a
+						measure to improve security.
+					</p>
+					<input
+						type="password"
+						class="input-bordered input mb-4 w-full"
+						placeholder="Enter encryption password"
+						bind:value={encryptionPassword}
+					/>
+					<button
+						class="btn btn-primary"
+						onclick={async () => {
+							for (const wallet of wallets) {
+								if ((wallet as unknown as OldWallet).private_key) {
+									wallet.encryptedPrivateKey = await AESGCMEncrypt(
+										(wallet as unknown as OldWallet).private_key!,
+										encryptionPassword
+									);
+									delete (wallet as unknown as OldWallet).private_key;
+								}
+							}
+							localStorage.setItem('wallets', JSON.stringify(wallets));
+							encryptPreviousWalletsModal = false;
+							encryptionPassword = '';
+						}}>Encrypt</button
+					>
+				</div>
+			</div>
+		{/if}
+
+		{#if dencryptionModal && wallets.length != 0}
+			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
+					<h3 class="mb-2 text-xl font-bold text-info">Decrypt your wallets!</h3>
+					<p class="mb-2 text-base-content">
+						Decrypt your wallets, if you wish to send transactions. If you do not, then close the
+						window.
+					</p>
+					<input
+						type="password"
+						class="input-bordered input mb-4 w-full"
+						placeholder="Enter dencryption password"
+						bind:value={encryptionPassword}
+					/>
+					<button
+						class="btn btn-primary"
+						onclick={async () => {
+							let isValid = false;
+							for (const wallet of wallets) {
+								if (await AESGCMDecrypt(wallet.encryptedPrivateKey, encryptionPassword)) {
+									isValid = true;
+									break;
+								}
+							}
+							if (isValid) {
+								dencryptionModal = false;
+								// encryptionPassword stays populated. this is used in sendModal to send transactions
+							} else {
+								encryptionPassword = '';
+							}
+						}}>Decrypt</button
+					>
+					<button
+						class="btn-danger btn"
+						onclick={() => {
+							encryptionPassword = '';
+							dencryptionModal = false;
+						}}>Cancel</button
+					>
+				</div>
+			</div>
+		{/if}
 		<div class="mb-6 flex flex-col items-center justify-center gap-4">
 			<input
 				type="text"
@@ -172,7 +263,12 @@
 		<div class="mb-4 flex justify-center">
 			<button
 				class="btn btn-outline btn-primary"
-				onclick={() => (ui.showSendKRO = !ui.showSendKRO)}
+				onclick={() => {
+					if (!encryptionPassword && !ui.showSendKRO) {
+						dencryptionModal = true;
+					}
+					ui.showSendKRO = !ui.showSendKRO;
+				}}
 				aria-expanded={ui.showSendKRO}
 				aria-controls="send-kro-section"
 			>
@@ -195,6 +291,8 @@
 					metadata={sendWidgetMetadata}
 					onSuccess={handleSendSuccess}
 					onError={handleSendError}
+					{encryptionPassword}
+					bind:dencryptionModal
 				/>
 			</div>
 		{/if}

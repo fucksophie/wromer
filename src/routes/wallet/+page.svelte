@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { api } from '$lib';
+	import { AESGCMDecrypt, AESGCMEncrypt } from '$lib/aes';
 	import type { Wallet } from '$lib/types';
 	import { faFlag, faDice } from '@fortawesome/free-solid-svg-icons';
 	import { calculateAddress } from 'krist';
@@ -8,6 +9,7 @@
 	const wallets: Wallet[] = $state(JSON.parse(localStorage.getItem('wallets') || '[]'));
 	let inputKey: string = $state('');
 	let inputError: string = $state('');
+	let encryptionPassword: string = $state('');
 
 	function generateRandomPrivateKey(): string {
 		const array = new Uint8Array(32);
@@ -75,17 +77,54 @@
 			<div class="text-lg text-base-content">
 				Calculated address is: <b class="text-primary">{walletAddress}</b>.
 			</div>
+			<div class="flex w-full max-w-md items-center gap-2">
+				<input
+					type="password"
+					class="input w-full text-center input-secondary"
+					bind:value={encryptionPassword}
+					placeholder="Enter encryption password (optional)"
+				/>
+			</div>
 			<button
 				class="btn mt-4 w-full max-w-md btn-success"
 				onclick={async () => {
 					if (walletAddress !== '???') {
 						const privateKey = inputKey;
 						if (privateKey) {
+							if (wallets.length > 0) {
+								let canDecrypt = false;
+								for (const w of wallets) {
+									try {
+										const decrypted = await AESGCMDecrypt(
+											w.encryptedPrivateKey,
+											encryptionPassword
+										);
+										if (decrypted) {
+											canDecrypt = true;
+											break;
+										}
+									} catch {
+										console.log(
+											'on creating a new wallet, failed to decrypt existing wallet to verify encryption password'
+										);
+										// Ignore and continue
+									}
+								}
+								if (!canDecrypt) {
+									inputError = 'Encryption password does not match existing wallets.';
+									return;
+								}
+							}
+
+							wallets.push({
+								address: walletAddress,
+								encryptedPrivateKey: await AESGCMEncrypt(privateKey, encryptionPassword)
+							});
+
 							const response = await api.login({ privatekey: privateKey });
 
 							if (response.authed) {
-								wallets.push({ address: walletAddress, private_key: privateKey });
-								localStorage.setItem('wallets', JSON.stringify(wallets));
+								localStorage.setItem('wallets', JSON.stringify(wallets)); // only actually sets if authed
 
 								location.href = '/';
 							}

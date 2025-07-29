@@ -1,4 +1,11 @@
 export interface Wallet {
-	private_key: string;
+	encryptedPrivateKey: string;
+	address: string;
+}
+/**
+ * @warning Use Wallet instead.
+ */
+export interface OldWallet {
+	private_key?: string;
 	address: string;
 }
