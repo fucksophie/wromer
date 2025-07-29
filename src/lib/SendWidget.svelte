@@ -125,33 +125,6 @@
 			selectedWalletBalance = undefined;
 		}
 	});
-
-	$effect(() => {
-		if (toAddress !== send.to.dropdown && toAddress !== send.to.manual) {
-			if (toType === 'dropdown') {
-				send.to.dropdown = toAddress;
-			} else {
-				send.to.manual = toAddress;
-			}
-		}
-	});
-
-	$effect(() => {
-		send.to.type = toType;
-	});
-
-	$effect(() => {
-		if (amount !== send.amount) {
-			send.amount = amount;
-		}
-	});
-
-	$effect(() => {
-		if (metadata !== send.metadata) {
-			send.metadata = metadata;
-		}
-	});
-
 	async function validatePrivateKey() {
 		send.from.private.error = '';
 		send.from.private.valid = false;
