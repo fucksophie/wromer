@@ -1,5 +1,7 @@
 <script lang="ts">
+	import Fa from 'svelte-fa';
 	import '../app.css';
+	import { faGithub } from '@fortawesome/free-brands-svg-icons';
 	let { children } = $props();
 
 	let title = $state('');
@@ -31,12 +33,19 @@
 	updateTitle();
 </script>
 
-<div class="neutral mb-4 navbar border-b border-base-300">
-	<div class="container mx-auto items-center">
-		<a href="/" class="text-xl font-bold text-primary transition-colors hover:text-secondary">
-			{title}
-		</a>
-		<div class="text-md font-bold">wromer.sad.ovh</div>
+<div class="neutral navbar border-b border-base-300">
+	<div class="flex w-full flex-row justify-around">
+		<div class="flex flex-col">
+			<a href="/" class="text-xl font-bold text-primary transition-colors hover:text-secondary">
+				{title}
+			</a>
+			<div class="text-md font-bold">wromer.sad.ovh</div>
+		</div>
+		<div class="flex flex-col justify-center">
+			<a href="https://github.com/fucksophie/wromer">
+				<Fa size="lg" icon={faGithub}></Fa>
+			</a>
+		</div>
 	</div>
 </div>
 
