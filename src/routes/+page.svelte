@@ -131,7 +131,6 @@
 				<button class="btn btn-outline btn-warning" onclick={openBackupModal}> Backup </button>
 			</div>
 		</div>
-		<!-- Backup Modal -->
 		{#if showBackupModal}
 			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
 				<div class="relative w-full max-w-lg rounded-lg bg-base-100 p-6 shadow-lg">
@@ -157,7 +156,6 @@
 				</div>
 			</div>
 		{/if}
-		<!-- Centered input in its own container, no border -->
 		<div class="mb-6 flex flex-col items-center justify-center gap-4">
 			<input
 				type="text"
@@ -171,7 +169,6 @@
 			{/if}
 		</div>
 
-		<!-- Show/hide Send KRO section button -->
 		<div class="mb-4 flex justify-center">
 			<button
 				class="btn btn-outline btn-primary"
@@ -187,7 +184,6 @@
 			</button>
 		</div>
 
-		<!-- SEND KRO SECTION -->
 		{#if ui.showSendKRO}
 			<div id="send-kro-section" class="mb-8">
 				<SendWidget

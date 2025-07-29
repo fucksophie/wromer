@@ -86,7 +86,7 @@
 							if (response.authed) {
 								wallets.push({ address: walletAddress, private_key: privateKey });
 								localStorage.setItem('wallets', JSON.stringify(wallets));
-								//<Add ..{walletAddress}..>
+
 								location.href = '/';
 							}
 						}

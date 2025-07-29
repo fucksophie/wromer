@@ -375,7 +375,6 @@
 				{/if}
 			{/if}
 		</div>
-		<!-- To: Dropdown (verified/contacts) or manual -->
 		<div class="mb-4 flex flex-col gap-2">
 			<div class="font-semibold">To:</div>
 			<div class="flex gap-2">
@@ -424,7 +423,6 @@
 				{/if}
 			{/if}
 		</div>
-		<!-- Amount -->
 		<div class="mb-4 flex flex-col gap-2">
 			<div class="font-semibold">Amount:</div>
 			<input
@@ -437,7 +435,6 @@
 				disabled={send.status.sending}
 			/>
 		</div>
-		<!-- Metadata -->
 		<div class="mb-4 flex flex-col gap-2">
 			<div class="font-semibold">Metadata (optional):</div>
 			<input
@@ -451,7 +448,6 @@
 				>You can attach metadata to your transaction (optional).</small
 			>
 		</div>
-		<!-- Send Button -->
 		<button class="btn w-full btn-primary" onclick={sendKRO} disabled={send.status.sending}>
 			{#if send.status.sending}
 				<span class="loading loading-sm loading-spinner"></span>

@@ -57,7 +57,6 @@
 		<h2 class="mb-6 text-center text-3xl font-bold text-primary">Contacts</h2>
 		<hr class="mb-6" />
 
-		<!-- Add Contact Form -->
 		<div class="card mb-8 border border-base-300 bg-base-100 shadow">
 			<div class="card-body">
 				<h3 class="mb-2 text-xl font-bold text-primary">Add Contact</h3>
@@ -94,7 +93,6 @@
 			</div>
 		</div>
 
-		<!-- Contacts List -->
 		{#if contacts.length === 0}
 			<div class="mb-8 alert alert-info shadow-lg">
 				<div>
