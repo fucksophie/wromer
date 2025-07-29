@@ -50,7 +50,9 @@
 						<div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
 							<div>
 								<div class="font-semibold text-primary">
-									{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
+									{tx.type == 'mined'
+										? 'Welfare'
+										: tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
 								</div>
 								<div class="text-sm text-base-content opacity-70">
 									{new Date(tx.time).toLocaleString()}
