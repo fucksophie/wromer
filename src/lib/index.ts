@@ -8,7 +8,8 @@ export const verified = {
 	kromerluvr: "Tyler's enchant shop",
 	ksugarcane: "Sophie's general store",
 	k75w1utsbr: "Twijn's ore shop",
-	k8se5pjcel: "Chris' shop"
+	k8se5pjcel: "Chris' shop",
+	krb1yie41o: "Seth's soakbot"
 };
 
 export const api = new KristApi({
