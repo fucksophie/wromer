@@ -5,8 +5,8 @@ import { KristApi } from 'krist';
 export const verified = {
 	serverwelf: 'ReconnectedCC server wallet.',
 	km2qpoer6h: 'Femcorp store wallet',
-	kbogmyonzn: "Tyler's enchant shop",
-	kqvqffjcyl: "Sophie's general store",
+	kromerluvr: "Tyler's enchant shop",
+	ksugarcane: "Sophie's general store",
 	k75w1utsbr: "Twijn's ore shop",
 	k8se5pjcel: "Chris' shop"
 };
