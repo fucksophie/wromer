@@ -38,11 +38,11 @@
 						href={`/wallet/${addr.address}`}
 						class={`card flex items-center border px-6 py-4 shadow transition-all duration-200 hover:border-primary hover:shadow-lg ${
 							i === 0
-								? 'border-green-400 bg-green-100'
+								? 'border-green-400 '
 								: i === 1
-									? 'border-red-400 bg-red-100'
+									? 'border-red-400 '
 									: i === 2
-										? 'border-yellow-400 bg-yellow-100'
+										? 'border-yellow-400'
 										: 'border-base-300 bg-neutral'
 						}`}
 					>
@@ -52,7 +52,7 @@
 									<span class="badge badge-lg font-bold badge-secondary">#{i + 1}</span>
 									<span class="font-mono font-semibold break-all text-primary">{addr.address}</span>
 								</div>
-								<div class="grid grid-cols-1 md:grid-cols-4">
+								<div class="flex flex-row">
 									<div class="stat">
 										<div class="stat-title text-base-content opacity-70">Balance</div>
 										<div class="stat-value text-success">{addr.balance} KRO</div>

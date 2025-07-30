@@ -17,6 +17,11 @@
 	let loading = $state(false);
 	let hasMore = $state(true);
 
+	let privateKeyModal = $state(0); // 0 - Hidden 1 - Shown 2 - View private key
+	let encryptionPassword = $state('');
+	let errorMessage = $state('');
+	let decyptedPrivatekey = $state('');
+
 	import Fa from 'svelte-fa';
 	import {
 		faUserCheck,
@@ -24,6 +29,7 @@
 		faChevronLeft,
 		faChevronRight
 	} from '@fortawesome/free-solid-svg-icons';
+	import { AESGCMDecrypt } from '$lib/aes';
 
 	async function loadTransactions() {
 		loading = true;
@@ -63,8 +69,79 @@
 			<Fa icon={faUserCheck} class="mr-2 text-xl" />
 			<span class="font-semibold">This address belongs to you.</span>
 		</div>
+		<button
+			class="btn mb-2 btn-primary"
+			onclick={() => {
+				privateKeyModal = 1;
+			}}>View private key</button
+		>
 	{/if}
+	{#if privateKeyModal == 1 || privateKeyModal == 2}
+		<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+			<div class="relative w-full max-w-lg rounded-lg bg-neutral p-6 shadow-lg">
+				<h3 class="mb-2 text-xl font-bold text-info">View your private key</h3>
+				{#if privateKeyModal == 2}
+					<div class="mb-4">
+						<span class="font-semibold">Private Key:</span>
+						<span class="ml-2 font-mono break-all select-all" id="private-key">
+							{decyptedPrivatekey}
+						</span>
+						<button
+							class="btn ml-2 btn-outline btn-sm btn-primary"
+							onclick={async () => {
+								await navigator.clipboard.writeText(decyptedPrivatekey);
+							}}
+							title="Copy to clipboard">Copy</button
+						>
+					</div>
+				{:else}
+					<p class="mb-2 text-base-content">
+						Enter your decryption password to view your private key.
+					</p>
+					<input
+						type="password"
+						class="input-bordered input mb-4 w-full"
+						placeholder="Enter dencryption password"
+						bind:value={encryptionPassword}
+					/>
+					{#if errorMessage}
+						<p class="mb-2 text-error">{errorMessage}</p>
+					{/if}
+					<button
+						class="btn btn-primary"
+						onclick={async () => {
+							const thisWallet = wallets.find((wallet) => wallet.address === params.address);
+							if (thisWallet) {
+								const decrypted = await AESGCMDecrypt(
+									thisWallet.encryptedPrivateKey,
+									encryptionPassword
+								);
+								if (decrypted) {
+									decyptedPrivatekey = decrypted;
+								}
+							}
 
+							if (decyptedPrivatekey) {
+								console.log('is valid');
+								privateKeyModal = 2;
+								// encryptionPassword stays populated. this is used in sendModal to send transactions
+							} else {
+								errorMessage = 'Invalid password';
+								encryptionPassword = '';
+							}
+						}}>View</button
+					>
+				{/if}
+				<button
+					class="btn-danger btn"
+					onclick={() => {
+						encryptionPassword = '';
+						privateKeyModal = 0;
+					}}>Close</button
+				>
+			</div>
+		</div>
+	{/if}
 	{#if thisWalletInformation}
 		<div class="card mb-6 border border-base-300 bg-neutral shadow">
 			<div class="card-body">
