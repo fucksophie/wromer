@@ -22,6 +22,7 @@
 	let errorMessage = $state('');
 	let decyptedPrivatekey = $state('');
 
+	let myAddress = $state(wallets.find((wallet) => wallet.address == params.address));
 	import Fa from 'svelte-fa';
 	import {
 		faUserCheck,
@@ -64,7 +65,7 @@
 			>
 		</div>
 	{/if}
-	{#if wallets.some((wallet) => wallet.address === params.address)}
+	{#if myAddress}
 		<div class="mb-6 alert alert-success shadow-lg">
 			<Fa icon={faUserCheck} class="mr-2 text-xl" />
 			<span class="font-semibold">This address belongs to you.</span>
@@ -110,10 +111,9 @@
 					<button
 						class="btn btn-primary"
 						onclick={async () => {
-							const thisWallet = wallets.find((wallet) => wallet.address === params.address);
-							if (thisWallet) {
+							if (myAddress) {
 								const decrypted = await AESGCMDecrypt(
-									thisWallet.encryptedPrivateKey,
+									myAddress.encryptedPrivateKey,
 									encryptionPassword
 								);
 								if (decrypted) {

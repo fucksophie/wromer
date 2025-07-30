@@ -14,6 +14,8 @@
 		faUndo
 	} from '@fortawesome/free-solid-svg-icons';
 	import { AESGCMDecrypt, AESGCMEncrypt } from '$lib/aes';
+	import { api } from '$lib';
+	import { onMount } from 'svelte';
 
 	const wallets: Wallet[] = $state(JSON.parse(localStorage.getItem('wallets') || '[]'));
 	const contacts: { address: string; description: string }[] = $state(
@@ -29,7 +31,7 @@
 	let showBackupModal = $state(false);
 	let backupString = $state('');
 	let encryptPreviousWalletsModal = $state(false);
-
+	let totalBalance: number | undefined = $state(undefined);
 	let recentlyDeleted: { wallet: Wallet; deletedAt: number }[] = $state([]);
 
 	function openBackupModal() {
@@ -48,6 +50,16 @@
 
 	const regex = getKristAddressRegexV2('k');
 	let dencryptionModal = $state(false);
+
+	onMount(async () => {
+		async function execute(wallet: Wallet) {
+			const data = await api.getAddress(wallet.address);
+			console.log('get-total-balance data[fetched] = ' + wallet.address);
+			return data.balance;
+		}
+		const data = await Promise.all(wallets.map((z) => execute(z)));
+		totalBalance = data.reduce((acc, w) => acc + w, 0);
+	});
 
 	$effect(() => {
 		if (wallets.find((z) => (z as unknown as OldWallet).private_key as string)) {
@@ -141,6 +153,7 @@
 				<button class="btn btn-outline btn-warning" onclick={openBackupModal}> Backup </button>
 			</div>
 		</div>
+
 		{#if showBackupModal}
 			<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
 				<div class="bg-neutral0 relative w-full max-w-lg rounded-lg p-6 shadow-lg">
@@ -340,9 +353,14 @@
 					</p>
 				</div>
 			</div>
-		{/if}
-
-		{#if wallets.length > 0}
+			{#if totalBalance}
+				<div class="mb-4">
+					<div class="alert flex items-center gap-4 alert-info">
+						<span class="font-semibold">Total Balance:</span>
+						<span class="text-lg text-primary">{totalBalance} KRO</span>
+					</div>
+				</div>
+			{/if}
 			<ul class="grid gap-4">
 				{#each wallets as wallet (wallet.address)}
 					<li class="relative">
