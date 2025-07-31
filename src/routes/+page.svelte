@@ -334,7 +334,7 @@
 			<div class="mb-8 alert alert-info shadow-lg">
 				<div>
 					<span class="text-lg font-semibold">No wallets found!</span>
-					<p class="mt-2 text-base-content">
+					<p class="mt-2">
 						You haven't created a wallet yet, so there's no information to display.
 					</p>
 					<p class="mt-2">
