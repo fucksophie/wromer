@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { api } from '$lib';
 	import { type KristAddress } from 'krist';
-
 	import { onMount } from 'svelte';
+
 	let richestAddresses: KristAddress[] = $state([]);
 	let loading = $state(false);
 

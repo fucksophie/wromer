@@ -2,7 +2,7 @@
 	import { api, verified } from '$lib';
 	import type { Wallet } from '$lib/types.js';
 
-	import { parseCommonMeta, type KristAddress, type KristTransaction } from 'krist';
+	import { type KristAddress, type KristTransaction } from 'krist';
 
 	let { params } = $props();
 	const wallets: Wallet[] = $state(JSON.parse(localStorage.getItem('wallets') || '[]'));
@@ -15,6 +15,8 @@
 	let page = $state(0);
 	const pageSize = 15;
 	let loading = $state(false);
+	let commonMetaLoading = $state(true);
+
 	let hasMore = $state(true);
 
 	let privateKeyModal = $state(0); // 0 - Hidden 1 - Shown 2 - View private key
@@ -31,6 +33,16 @@
 		faChevronRight
 	} from '@fortawesome/free-solid-svg-icons';
 	import { AESGCMDecrypt } from '$lib/aes';
+	import CommonMeta from 'commonmeta';
+
+	$effect(() => {
+		async function doAsync() {
+			commonMetaLoading = true;
+			await CommonMeta.initialize();
+			commonMetaLoading = false;
+		}
+		doAsync();
+	});
 
 	async function loadTransactions() {
 		loading = true;
@@ -214,16 +226,19 @@
 								{#if tx.metadata}
 									<div>
 										<span class="font-medium">Metadata:</span>
-										{#if parseCommonMeta(tx.metadata) !== null}
-											{#each Object.entries(parseCommonMeta(tx.metadata)!.custom) as [key, value] (key + value)}
-												<div class="ml-4">
-													<span class="font-semibold">{key}:</span>
-													{value}
-												</div>
-											{/each}
-										{:else}
-											<span class="ml-2">{tx.metadata}</span>
-										{/if}
+										<svelte:boundary>
+											{#snippet pending()}{/snippet}
+											{#if CommonMeta.validateSync(tx.metadata)}
+												{#each Object.entries(CommonMeta.parseSync(tx.metadata).pairs) as [key, value] (key + value)}
+													<div class="ml-4">
+														<span class="font-semibold">{key}:</span>
+														{value}
+													</div>
+												{/each}
+											{:else}
+												<span class="ml-2">{tx.metadata}</span>
+											{/if}
+										</svelte:boundary>
 									</div>
 								{/if}
 								{#if tx.sent_metaname}
@@ -257,7 +272,7 @@
 			Next
 			<Fa icon={faChevronRight} class="ml-2" />
 		</button>
-		{#if loading}
+		{#if loading || commonMetaLoading}
 			<span class="loading ml-4 loading-md loading-spinner text-primary"></span>
 		{/if}
 	</div>

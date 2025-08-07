@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { parseCommonMeta, type KristTransaction } from 'krist';
-
+	import { type KristTransaction } from 'krist';
+	import { CommonMeta } from 'commonmeta';
 	import { onMount } from 'svelte';
 
 	import Fa from 'svelte-fa';
@@ -11,7 +11,17 @@
 	let page = $state(0);
 	const pageSize = 15;
 	let loading = $state(false);
+	let commonMetaLoading = $state(true);
 	let hasMore = $state(true);
+
+	$effect(() => {
+		async function doAsync() {
+			commonMetaLoading = true;
+			await CommonMeta.initialize();
+			commonMetaLoading = false;
+		}
+		doAsync();
+	});
 
 	async function loadTransactions() {
 		loading = true;
@@ -78,16 +88,19 @@
 								{#if tx.metadata}
 									<div>
 										<span class="font-medium">Metadata:</span>
-										{#if parseCommonMeta(tx.metadata) !== null}
-											{#each Object.entries(parseCommonMeta(tx.metadata)!.custom) as [key, value] (key + value)}
-												<div class="ml-4">
-													<span class="font-semibold">{key}:</span>
-													{value}
-												</div>
-											{/each}
-										{:else}
-											<span class="ml-2">{tx.metadata}</span>
-										{/if}
+										<svelte:boundary>
+											{#snippet pending()}{/snippet}
+											{#if tx.metadata !== null && CommonMeta.validateSync(tx.metadata)}
+												{#each Object.entries(CommonMeta.parseSync(tx.metadata).pairs) as [key, value] (key + value)}
+													<div class="ml-4">
+														<span class="font-semibold">{key}:</span>
+														{value}
+													</div>
+												{/each}
+											{:else}
+												<span class="ml-2">{tx.metadata}</span>
+											{/if}
+										</svelte:boundary>
 									</div>
 								{/if}
 								{#if tx.sent_metaname}
@@ -121,7 +134,7 @@
 			Next
 			<Fa icon={faChevronRight} class="ml-2" />
 		</button>
-		{#if loading}
+		{#if loading || commonMetaLoading}
 			<span class="loading ml-4 loading-md loading-spinner text-primary"></span>
 		{/if}
 	</div>
