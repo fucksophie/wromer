@@ -38,6 +38,7 @@
 		backupString = `${JSON.stringify(Object.entries(localStorage))}.map(z=>localStorage.setItem(z[0],z[1]));location.reload()`;
 		showBackupModal = true;
 	}
+
 	function closeBackupModal() {
 		showBackupModal = false;
 	}

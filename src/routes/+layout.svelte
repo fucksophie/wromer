@@ -33,13 +33,13 @@
 	updateTitle();
 </script>
 
-<div class="neutral navbar border-b border-base-300">
+<div class="navbar border-b border-base-300 bg-red-400">
 	<div class="flex w-full flex-row justify-around">
 		<div class="flex flex-col">
-			<a href="/" class="text-xl font-bold text-primary transition-colors hover:text-secondary">
-				{title}
+			<a href="/" class="text-xl font-bold text-black transition-colors hover:text-secondary">
+				WROMER IS NO LONGER SUPPORTED!!
 			</a>
-			<div class="text-md font-bold">wromer.sad.ovh</div>
+			<div class="text-md font-bold text-white">Please move to a alternative wallet.</div>
 		</div>
 		<div class="flex flex-col justify-center">
 			<a href="https://github.com/fucksophie/wromer">
